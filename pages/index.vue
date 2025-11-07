@@ -178,7 +178,7 @@ const searchApps = async () => {
         </div>
         <div class="hidden sm:flex items-center gap-4 text-[11px] text-slate-400">
           <span class="hidden md:inline">
-            Data source: public App Store pages (no exact downloads exposed)
+            Data source: public App Store pages
           </span>
           <span>
             <code class="text-slate-600">app-store-scraper</code>
