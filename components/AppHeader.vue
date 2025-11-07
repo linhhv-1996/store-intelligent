@@ -9,24 +9,25 @@
         <div
           class="h-9 w-9 rounded-xl bg-gradient-to-tr from-sky-500/10 via-sky-400/5 to-indigo-400/10 flex items-center justify-center border border-sky-200"
         >
-          <span class="text-[11px] font-semibold text-sky-700">iOS</span>
+          <span class="text-base">🛍️</span>
         </div>
         <div>
           <h1 class="text-[15px] font-semibold tracking-tight text-slate-900">
-            App Store Intelligence
+            Store Intelligence
           </h1>
           <p class="text-[11px] text-slate-500">
             Internal spy tool for your app studio – quick performance & meta
-            check for any iOS app.
+            check for any app.
           </p>
         </div>
       </div>
       <div class="hidden sm:flex items-center gap-4 text-[11px] text-slate-400">
         <span class="hidden md:inline">
-          Data source: public App Store pages
+          Data source: public store pages
         </span>
         <span>
           <code class="text-slate-600">app-store-scraper</code>
+          <code class="text-slate-600 ml-1">google-play-scraper</code>
         </span>
       </div>
     </div>

@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue'
+import { defineProps, defineEmits, computed } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   show: boolean
   reviews: any[]
   loading: boolean
   error: string
   country: string
+  store: 'apple' | 'google'
 }>()
 
 const emit = defineEmits(['close'])
@@ -16,6 +17,10 @@ const ratingStars = (score: any) => {
   const s = Math.min(Math.max(num, 0), 5)
   return '★'.repeat(s) + '☆'.repeat(5 - s)
 }
+
+const platformName = computed(() => {
+  return props.store === 'apple' ? 'App Store' : 'Google Play'
+})
 </script>
 
 <template>
@@ -34,7 +39,7 @@ const ratingStars = (score: any) => {
           <div>
             <p class="text-sm font-semibold text-slate-900">Recent reviews</p>
             <p class="text-[11px] text-slate-500">
-              Top {{ reviews.length || 0 }} most recent reviews from App Store
+              Top {{ reviews.length || 0 }} most recent reviews from {{ platformName }}
               ({{ country.toUpperCase() }})
             </p>
           </div>
@@ -95,7 +100,7 @@ const ratingStars = (score: any) => {
               target="_blank"
               class="mt-1 inline-flex text-[10px] text-sky-600 hover:text-sky-500"
             >
-              View on App Store →
+              View on {{ platformName }} →
             </a>
           </div>
         </div>
