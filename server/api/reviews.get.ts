@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
         text: r.text,
         score: r.score,
         version: r.version,
-        date: r.date,
+        date: r.replyDate,
         url: r.url
       }))
 
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
         text: r.text,
         score: r.score,
         version: r.version,
-        date: r.date,
+        date: r.updated,
         url: r.url
       }))
       

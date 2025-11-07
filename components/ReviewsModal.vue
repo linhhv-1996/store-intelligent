@@ -82,6 +82,8 @@ const fetchReviewsData = async (isLoadMore = false) => {
     // @ts-ignore
     const data = await $fetch('/api/reviews', { params })
 
+    console.log(data)
+
     if ((data as any).error) {
       throw new Error((data as any).error)
     }
