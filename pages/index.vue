@@ -693,13 +693,13 @@ const inspectFromSearch = (app: any) => {
               </h3>
               <div class="flex justify-between">
                 <span class="text-slate-500">Name</span>
-                <span class="text-right max-w-[140px] text-slate-700">
+                <span class="text-right max-w-[140px] text-slate-700 truncate">
                   {{ appResult.developer || '—' }}
                 </span>
               </div>
               <div class="flex justify-between">
                 <span class="text-slate-500">Developer ID</span>
-                <span class="text-right max-w-[140px] text-slate-700">
+                <span class="text-right max-w-[140px] text-slate-700 truncate">
                   {{ appResult.developerId || '—' }}
                 </span>
               </div>
