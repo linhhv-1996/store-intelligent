@@ -26,10 +26,11 @@ const searchLoading = ref(false)
 
 // --- Reviews modal state ---
 const showReviewsModal = ref(false)
-const reviews = ref<any[]>([])
-const reviewsLoading = ref(false)
-const reviewsError = ref('')
-const reviewsPage = ref(1)
+
+// const reviews = ref<any[]>([])
+// const reviewsLoading = ref(false)
+// const reviewsError = ref('')
+// const reviewsPage = ref(1)
 
 // --- COMPUTED ---
 
@@ -85,6 +86,26 @@ const formatNumber = (n: number | null | undefined) => {
   return n.toLocaleString()
 }
 
+const formatCompactNumber = (n: number | null | undefined) => {
+  if (n === null || n === undefined || Number.isNaN(n) || n === 0) return '0'
+  try {
+    // Dùng 'en-US' để đảm bảo ra chữ K, M, B...
+    const num = new Intl.NumberFormat('en-US', {
+      notation: 'compact',
+      compactDisplay: 'short',
+      maximumFractionDigits: 1 // Cho phép 1.2M, 9.9K
+    }).format(n)
+    
+    // Xóa .0 (ví dụ 1.0M -> 1M) nhưng giữ lại 1.2M
+    return num.replace(/\.0(?=[KMGTB])/, '')
+  } catch (e) {
+    // Fallback nếu trình duyệt cũ
+    if (n < 1000000) return (n / 1000).toFixed(0) + 'K'
+    return (n / 1_000_000).toFixed(1) + 'M'
+  }
+}
+
+
 // --- FUNCTIONS ---
 
 // Reset form khi đổi store
@@ -102,9 +123,9 @@ const onStoreChange = () => {
   searchLoading.value = false
 
   // Reset reviews
-  reviews.value = []
-  reviewsError.value = ''
-  reviewsLoading.value = false
+  // reviews.value = []
+  // reviewsError.value = ''
+  // reviewsLoading.value = false
 }
 
 // Helper set store + reset
@@ -155,11 +176,11 @@ const checkApp = async () => {
 
 const openReviews = async () => {
   if (!appResult.value) return
-  reviewsError.value = ''
-  reviews.value = []
-  reviewsPage.value = 1
+  // reviewsError.value = ''
+  // reviews.value = []
+  // reviewsPage.value = 1
   showReviewsModal.value = true
-  reviewsLoading.value = true
+  // reviewsLoading.value = true
   try {
     // @ts-ignore
     const data = await $fetch('/api/reviews', {
@@ -167,20 +188,20 @@ const openReviews = async () => {
         appId: appResult.value.appId,
         id: appResult.value.id, // Gửi cả id cho Apple
         country: country.value,
-        page: String(reviewsPage.value),
+        // page: String(reviewsPage.value),
         store: selectedStore.value // Dùng state chung
       }
     })
 
     if ((data as any).error) {
-      reviewsError.value = (data as any).error
+      // reviewsError.value = (data as any).error
     } else {
-      reviews.value = (data as any).reviews || []
+      // reviews.value = (data as any).reviews || []
     }
   } catch (e) {
-    reviewsError.value = 'Cannot load reviews'
+    // reviewsError.value = 'Cannot load reviews'
   } finally {
-    reviewsLoading.value = false
+    // reviewsLoading.value = false
   }
 }
 
@@ -232,7 +253,6 @@ const inspectFromSearch = (app: any) => {
 <template>
   <div>
     <div class="max-w-5xl mx-auto px-4 py-6 space-y-6">
-      <!-- Page header -->
       <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <p class="text-[11px] uppercase tracking-[0.2em] text-sky-600 font-semibold">
@@ -253,7 +273,6 @@ const inspectFromSearch = (app: any) => {
         </div>
       </header>
 
-      <!-- Main controls: store + tab -->
       <div
         class="flex flex-col md:flex-row md:items-center md:justify-between gap-3
                rounded-2xl border border-slate-200 bg-white px-3.5 py-3 shadow-sm shadow-slate-100"
@@ -318,10 +337,9 @@ const inspectFromSearch = (app: any) => {
         </div>
       </div>
 
-      <!-- Lookup tab -->
       <div v-if="activeTab === 'lookup'" class="space-y-6">
         <section
-          class="relative overflow-hidden rounded-xl border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-sky-50 px-5 py-5 shadow-sm shadow-slate-100"
+          class="relative overflow-hidden rounded-lg border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-sky-50 px-5 py-5 shadow-sm shadow-slate-100"
         >
           <div
             class="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-sky-100/60"
@@ -331,7 +349,6 @@ const inspectFromSearch = (app: any) => {
           />
 
           <div class="relative flex flex-col lg:flex-row gap-6">
-            <!-- Form -->
             <div class="flex-1 space-y-4">
               <div>
                 <p
@@ -353,7 +370,7 @@ const inspectFromSearch = (app: any) => {
                     v-model="appId"
                     type="text"
                     :placeholder="lookupPlaceholder"
-                    class="w-full rounded-xl bg-white border border-slate-300 px-3 py-2 text-sm
+                    class="w-full rounded-lg bg-white border border-slate-300 px-3 py-2 text-sm
                            focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   />
                 </div>
@@ -364,7 +381,7 @@ const inspectFromSearch = (app: any) => {
                   </label>
                   <select
                     v-model="country"
-                    class="w-full rounded-xl bg-white border border-slate-300 px-3 py-2 text-sm
+                    class="w-full rounded-lg bg-white border border-slate-300 px-3 py-2 text-sm
                            focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
                   >
                     <option value="us">US</option>
@@ -378,7 +395,7 @@ const inspectFromSearch = (app: any) => {
                 <button
                   type="button"
                   @click="checkApp"
-                  class="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium
+                  class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium
                          bg-slate-900 hover:bg-slate-800 text-white transition
                          disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto"
                   :disabled="appLoading"
@@ -397,24 +414,23 @@ const inspectFromSearch = (app: any) => {
               </p>
             </div>
 
-            <!-- Snapshot -->
             <div
-              class="w-full lg:w-64 rounded-xl bg-white/80 border border-slate-200 px-3.5 py-3 text-[11px] text-slate-600 backdrop-blur flex flex-col gap-2"
+              class="w-full lg:w-64 rounded-lg bg-white/80 border border-slate-200 px-3.5 py-3 text-[11px] text-slate-600 backdrop-blur flex flex-col gap-2"
             >
               <p class="text-[11px] font-medium text-slate-700">Snapshot</p>
 
               <div v-if="appLoading" class="space-y-2 animate-pulse">
                 <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-xl bg-slate-100" />
+                  <div class="w-10 h-10 rounded-lg bg-slate-100" />
                   <div class="flex-1 space-y-1">
                     <div class="h-3 rounded bg-slate-100" />
                     <div class="h-2.5 rounded bg-slate-100 w-3/4" />
                   </div>
                 </div>
-                <div class="grid grid-cols-3 gap-2 mt-1.5">
-                  <div class="h-10 rounded bg-slate-100" />
-                  <div class="h-10 rounded bg-slate-100" />
-                  <div class="h-10 rounded bg-slate-100" />
+                <div class="space-y-2 mt-1.5">
+                    <div class="h-5 rounded bg-slate-100" />
+                    <div class="h-5 rounded bg-slate-100" />
+                    <div class="h-5 rounded bg-slate-100" />
                 </div>
               </div>
 
@@ -423,46 +439,45 @@ const inspectFromSearch = (app: any) => {
                   <img
                     :src="appResult.icon"
                     :alt="appResult.title"
-                    class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 object-cover"
+                    class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 object-cover"
                   />
                   <div class="truncate">
-                    <p class="text-xs font-semibold text-slate-900 truncate">
+                    <p class="text-md font-semibold text-slate-900 truncate">
                       {{ appResult.title }}
                     </p>
-                    <p class="text-[10px] text-slate-500 truncate">
+                    <p class="text-[12px] text-slate-500 truncate">
                       {{ appResult.developer }}
                     </p>
                   </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-2 mt-1.5">
-                  <div>
-                    <p class="text-[10px] text-slate-500">Rating</p>
-                    <p class="text-base font-semibold text-slate-900">
+                <div class="space-y-2 mt-1.5">
+                  <div class="flex justify-between items-baseline">
+                    <p class="text-[12px] text-slate-500">Rating</p>
+                    <p class="text-[12px] text-slate-900">
                       {{ appResult.rating ? appResult.rating.toFixed(1) : 'N/A' }}
                     </p>
                   </div>
-                  <div>
-                    <p class="text-[10px] text-slate-500">Reviews</p>
-                    <p class="text-base font-semibold text-slate-900">
-                      {{ formatNumber(appResult.ratingCount) }}
+                  <div class="flex justify-between items-baseline">
+                    <p class="text-[12px] text-slate-500">Reviews</p>
+                    <p class="text-[12px] text-slate-900">
+                      {{ formatCompactNumber(appResult.ratingCount) }}
                     </p>
                   </div>
-                  <div>
-                    <p class="text-[10px] text-slate-500">
+                  <div class="flex justify-between items-baseline">
+                    <p class="text-[12px] text-slate-500">
                       {{ selectedStore === 'apple' ? 'Size' : 'Installs' }}
                     </p>
-                    <p class="text-base font-semibold text-slate-900">
+                    <p class="text-[12px] text-slate-900">
                       {{
                         selectedStore === 'apple'
                           ? prettySize(appResult.size)
-                          : formatNumber(appResult.installs)
+                          : formatCompactNumber(appResult.installs) 
                       }}
                     </p>
                   </div>
                 </div>
               </div>
-
               <div v-else class="text-[11px] text-slate-500">
                 No app selected yet. Run a lookup to see rating & review stats.
               </div>
@@ -470,10 +485,9 @@ const inspectFromSearch = (app: any) => {
           </div>
         </section>
 
-        <!-- App details -->
         <section v-if="appResult" class="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div
-            class="lg:col-span-2 bg-white border border-slate-200 rounded-xl p-4 shadow-sm shadow-slate-100"
+            class="lg:col-span-2 bg-white border border-slate-200 rounded-lg p-4 shadow-sm shadow-slate-100"
           >
             <div class="flex flex-col md:flex-row gap-4 mb-4">
               <img
@@ -566,7 +580,7 @@ const inspectFromSearch = (app: any) => {
                     {{ appResult.contentRating }}
                   </span>
                   <span
-                    v-if="appResult.requiredOsVersion"
+                    vif="appResult.requiredOsVersion"
                     class="inline-flex items-center rounded-full bg-slate-50 text-slate-700 border border-slate-200 px-2 py-[2px] text-[10px]"
                   >
                     <span v-if="selectedStore === 'apple'">iOS </span>
@@ -618,10 +632,9 @@ const inspectFromSearch = (app: any) => {
             </div>
           </div>
 
-          <!-- Side meta -->
           <div class="space-y-4">
             <div
-              class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm shadow-slate-100 text-[11px] text-slate-600 space-y-2"
+              class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm shadow-slate-100 text-[11px] text-slate-600 space-y-2"
             >
               <h3
                 class="text-[11px] font-semibold text-slate-800 uppercase tracking-[0.16em] mb-1"
@@ -671,7 +684,7 @@ const inspectFromSearch = (app: any) => {
             </div>
 
             <div
-              class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm shadow-slate-100 text-[11px] text-slate-600 space-y-2"
+              class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm shadow-slate-100 text-[11px] text-slate-600 space-y-2"
             >
               <h3
                 class="text-[11px] font-semibold text-slate-800 uppercase tracking-[0.16em] mb-1"
@@ -708,10 +721,9 @@ const inspectFromSearch = (app: any) => {
         </section>
       </div>
 
-      <!-- Search tab -->
       <div v-if="activeTab === 'search'">
         <section
-          class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm shadow-slate-100"
+          class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm shadow-slate-100"
         >
           <div class="flex items-center justify-between gap-2 mb-3">
             <div>
@@ -733,7 +745,7 @@ const inspectFromSearch = (app: any) => {
                 v-model="searchTerm"
                 type="text"
                 placeholder="habit, task manager, ai chat…"
-                class="w-full rounded-xl bg-white border border-slate-300 px-3 py-2 text-sm
+                class="w-full rounded-lg bg-white border border-slate-300 px-3 py-2 text-sm
                        focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               />
             </div>
@@ -744,7 +756,7 @@ const inspectFromSearch = (app: any) => {
               </label>
               <select
                 v-model="searchCountry"
-                class="w-full rounded-xl bg-white border border-slate-300 px-3 py-2 text-sm
+                class="w-full rounded-lg bg-white border border-slate-300 px-3 py-2 text-sm
                        focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
               >
                 <option value="us">US</option>
@@ -759,7 +771,7 @@ const inspectFromSearch = (app: any) => {
               <button
                 type="button"
                 @click="searchApps"
-                class="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium
+                class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium
                        bg-slate-900 hover:bg-slate-800 text-white transition
                        disabled:opacity-60 disabled:cursor-not-allowed w-full"
                 :disabled="searchLoading"
@@ -775,17 +787,17 @@ const inspectFromSearch = (app: any) => {
 
           <div
             class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
-            v-if="searchResults.length"
+            vif="searchResults.length"
           >
             <div
               v-for="app in searchResults"
               :key="app.appId"
-              class="flex gap-3 rounded-xl border border-slate-200 bg-slate-50/80 p-3 hover:border-sky-200 hover:bg-sky-50/60 transition"
+              class="flex gap-3 rounded-lg border border-slate-200 bg-slate-50/80 p-3 hover:border-sky-200 hover:bg-sky-50/60 transition"
             >
               <img
                 :src="app.icon"
                 :alt="app.title"
-                class="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 object-cover flex-shrink-0"
+                class="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 object-cover flex-shrink-0"
               />
               <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between gap-2">
@@ -808,35 +820,38 @@ const inspectFromSearch = (app: any) => {
                   {{ app.free ? 'Free' : (app.currency || '$') + app.price }}
                 </p>
 
-                <div class="mt-1 flex items-center gap-2">
-                  <div class="min-w-0 flex-1">
+                <div class="mt-1.5 flex items-center justify-between">
+                  <div class="min-w-0 flex-1 pr-2">
                     <code
                       class="text-[9px] px-2 py-[2px] rounded-full bg-white border border-slate-200 text-slate-500 truncate inline-block max-w-full"
                     >
                       {{ app.appId }}
                     </code>
                   </div>
-                  <a
-                    :href="app.url"
-                    target="_blank"
-                    class="text-[10px] text-sky-600 hover:text-sky-500 flex-shrink-0"
-                  >
-                    View →
-                  </a>
-                  <button
-                    type="button"
-                    class="text-[10px] text-slate-600 underline-offset-2 hover:underline flex-shrink-0"
-                    @click="inspectFromSearch(app)"
-                  >
-                    Inspect
-                  </button>
+                  <div class="flex items-center gap-2 flex-shrink-0">
+                    <a
+                      :href="app.url"
+                      target="_blank"
+                      class="text-[10px] text-sky-600 hover:text-sky-500"
+                    >
+                      View →
+                    </a>
+                    <span class="text-[10px] text-slate-300">|</span>
+                    <button
+                      type="button"
+                      class="text-[10px] text-slate-600 underline-offset-2 hover:underline"
+                      @click="inspectFromSearch(app)"
+                    >
+                      Inspect
+                    </button>
+                  </div>
                 </div>
-              </div>
+                </div>
             </div>
           </div>
 
           <p
-            v-else-if="!searchLoading && !searchError"
+            v-if="searchLoading && searchError"
             class="mt-3 text-[11px] text-slate-400 flex items-center gap-1"
           >
             <span>🔍</span>
@@ -848,7 +863,7 @@ const inspectFromSearch = (app: any) => {
       </div>
     </div>
 
-    <ReviewsModal
+    <!-- <ReviewsModal
       :show="showReviewsModal"
       :reviews="reviews"
       :loading="reviewsLoading"
@@ -856,7 +871,14 @@ const inspectFromSearch = (app: any) => {
       :country="country"
       :store="selectedStore"
       @close="showReviewsModal = false"
+    /> -->
+    <ReviewsModal
+      :show="showReviewsModal"
+      :appId="appResult?.appId"
+      :id="appResult?.id"
+      :store="selectedStore"
+      :initialCountry="country" 
+      @close="showReviewsModal = false"
     />
   </div>
 </template>
-

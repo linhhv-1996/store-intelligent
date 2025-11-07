@@ -14,21 +14,21 @@ const getIdFromUrl = ((url: any) => {
 })
 
 export default defineEventHandler(async (event) => {
-  const { term, country = 'us', limit = '12', store: storeType = 'apple' } = getQuery(event)
-
+  const { term, country = 'us', store: storeType = 'apple' } = getQuery(event)
   if (!term) {
     return { error: 'Missing term' }
   }
 
   try {
     let apps: any[] = []
+    const numLimit = 99
 
     if (storeType === 'google') {
       // --- Google Play Logic ---
       apps = await gplay.search({
         term: term as string,
         country: (country as string) || 'us',
-        num: Number(limit),
+        num: numLimit,
         lang: 'en'
       })
       
@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
       apps = await store.search({
         term: term as string,
         country: (country as string) || 'us',
-        num: Number(limit)
+        num: numLimit,
       })
       
       // Chuẩn hóa kết quả App Store
