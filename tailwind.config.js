@@ -9,7 +9,14 @@ module.exports = {
     './error.vue'
   ],
   theme: {
-    extend: {}
+    extend: {
+      maxWidth: {
+        '5xl': '1000px'
+      },
+      fontFamily: {
+        'tech': ['"Exo 2"', 'monospace']
+      }
+    }
   },
   plugins: []
 }
