@@ -351,7 +351,7 @@ const inspectFromSearch = (app: any) => {
                 <button
                   type="button"
                   @click="checkApp"
-                  class="inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium
+                  class="inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium
                          bg-slate-900 text-amber-100 border border-slate-900
                          shadow-[2px_2px_0_rgba(15,23,42,0.3)] transition-transform
                          hover:-translate-y-[1px] active:translate-y-0
@@ -503,8 +503,9 @@ const inspectFromSearch = (app: any) => {
                     v-if="appResult.ratingCount && appResult.ratingCount > 0"
                     type="button"
                     @click="openReviews"
-                    class="inline-flex items-center gap-1 rounded px-2.5 py-1 text-[11px] text-slate-800
-                           bg-white border border-slate-200 hover:bg-slate-50"
+                    class="inline-flex items-center gap-1 text-xs font-medium text-slate-900
+                           px-2 py-1 bg-amber-100 border border-slate-300 rounded
+                           shadow-[2px_2px_0_rgba(15,23,42,0.15)] hover:bg-amber-200/80"
                   >
                     View recent reviews
                   </button>
