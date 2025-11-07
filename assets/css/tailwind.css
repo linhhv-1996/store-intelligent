@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Ép tất cả các container gốc dãn 100% chiều cao 
+*/
+html, body, #__nuxt {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   @apply bg-slate-50 text-slate-900;
+  display: flex; /* Dùng flex cho body */
+}
+
+#__nuxt {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* Ép #__nuxt dãn ra đầy body */
 }

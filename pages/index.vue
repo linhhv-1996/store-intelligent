@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import ReviewsModal from '~/components/ReviewsModal.vue'
 
 // --- STATE ---
 
@@ -47,12 +48,6 @@ const joinLanguages = (langs?: string[]) => {
 const formatNumber = (n: number | null | undefined) => {
   if (!n || Number.isNaN(n)) return '0'
   return n.toLocaleString()
-}
-
-const ratingStars = (score: any) => {
-  const num = Math.round(Number(score) || 0)
-  const s = Math.min(Math.max(num, 0), 5)
-  return '★'.repeat(s) + '☆'.repeat(5 - s)
 }
 
 // --- FUNCTIONS ---
@@ -118,10 +113,6 @@ const openReviews = async () => {
   }
 }
 
-const closeReviews = () => {
-  showReviewsModal.value = false
-}
-
 const searchApps = async () => {
   searchError.value = ''
   searchResults.value = []
@@ -153,41 +144,8 @@ const searchApps = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50">
-    <header
-      class="border-b border-slate-200 bg-white/80 backdrop-blur sticky top-0 z-20"
-    >
-      <div
-        class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3"
-      >
-        <div class="flex items-center gap-3">
-          <div
-            class="h-9 w-9 rounded-xl bg-gradient-to-tr from-sky-500/10 via-sky-400/5 to-indigo-400/10 flex items-center justify-center border border-sky-200"
-          >
-            <span class="text-[11px] font-semibold text-sky-700">iOS</span>
-          </div>
-          <div>
-            <h1 class="text-[15px] font-semibold tracking-tight text-slate-900">
-              App Store Intelligence
-            </h1>
-            <p class="text-[11px] text-slate-500">
-              Internal spy tool for your app studio – quick performance & meta
-              check for any iOS app.
-            </p>
-          </div>
-        </div>
-        <div class="hidden sm:flex items-center gap-4 text-[11px] text-slate-400">
-          <span class="hidden md:inline">
-            Data source: public App Store pages
-          </span>
-          <span>
-            <code class="text-slate-600">app-store-scraper</code>
-          </span>
-        </div>
-      </div>
-    </header>
-
-    <main class="max-w-5xl mx-auto px-4 py-6 space-y-6">
+  <div>
+    <div class="max-w-5xl mx-auto px-4 py-6 space-y-6">
       <div class="flex items-center gap-2">
         <button
           type="button"
@@ -229,7 +187,9 @@ const searchApps = async () => {
           <div class="relative flex flex-col lg:flex-row gap-6">
             <div class="flex-1 space-y-4">
               <div>
-                <p class="text-[11px] uppercase tracking-[0.18em] text-sky-600 font-medium">
+                <p
+                  class="text-[11px] uppercase tracking-[0.18em] text-sky-600 font-medium"
+                >
                   App lookup
                 </p>
                 <h2 class="text-xl font-semibold text-slate-900 mt-1">
@@ -300,9 +260,7 @@ const searchApps = async () => {
             <div
               class="w-full lg:w-64 rounded-xl bg-white/80 border border-slate-200 px-3.5 py-3 text-[11px] text-slate-600 backdrop-blur flex flex-col gap-2"
             >
-              <p class="text-[11px] font-medium text-slate-700">
-                Snapshot
-              </p>
+              <p class="text-[11px] font-medium text-slate-700">Snapshot</p>
               <div v-if="appResult" class="space-y-2">
                 <div class="flex items-center gap-3">
                   <img
@@ -336,7 +294,9 @@ const searchApps = async () => {
                   <div class="space-y-0.5">
                     <p class="text-[10px] text-slate-500">Price</p>
                     <p class="text-sm font-semibold text-slate-900">
-                      <span v-if="appResult.free" class="text-emerald-600">Free</span>
+                      <span v-if="appResult.free" class="text-emerald-600"
+                        >Free</span
+                      >
                       <span v-else>
                         {{ appResult.currency || '$' }}{{ appResult.price }}
                       </span>
@@ -349,7 +309,9 @@ const searchApps = async () => {
                     </p>
                   </div>
                 </div>
-                <p class="pt-2 mt-1 border-t border-slate-200 text-[10px] text-slate-400">
+                <p
+                  class="pt-2 mt-1 border-t border-slate-200 text-[10px] text-slate-400"
+                >
                   Exact download numbers are not exposed by Apple. Use reviews +
                   rankings as proxies.
                 </p>
@@ -469,7 +431,9 @@ const searchApps = async () => {
             </div>
 
             <div class="border-t border-slate-200 pt-3 mt-2">
-              <h3 class="text-[11px] font-semibold text-slate-700 uppercase tracking-[0.16em] mb-2">
+              <h3
+                class="text-[11px] font-semibold text-slate-700 uppercase tracking-[0.16em] mb-2"
+              >
                 Description
               </h3>
               <p
@@ -483,7 +447,9 @@ const searchApps = async () => {
               v-if="appResult.releaseNotes"
               class="border-t border-slate-200 pt-3 mt-3"
             >
-              <h3 class="text-[11px] font-semibold text-slate-700 uppercase tracking-[0.16em] mb-1.5">
+              <h3
+                class="text-[11px] font-semibold text-slate-700 uppercase tracking-[0.16em] mb-1.5"
+              >
                 Latest release notes
               </h3>
               <p
@@ -498,7 +464,9 @@ const searchApps = async () => {
             <div
               class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm shadow-slate-100 text-[11px] text-slate-600 space-y-2"
             >
-              <h3 class="text-[11px] font-semibold text-slate-800 uppercase tracking-[0.16em] mb-1">
+              <h3
+                class="text-[11px] font-semibold text-slate-800 uppercase tracking-[0.16em] mb-1"
+              >
                 Meta & platform
               </h3>
               <div class="flex justify-between">
@@ -534,7 +502,11 @@ const searchApps = async () => {
               <div class="flex justify-between">
                 <span class="text-slate-500">Last updated</span>
                 <span class="text-slate-700">
-                  {{ appResult.updated || appResult.currentVersionReleaseDate || '—' }}
+                  {{
+                    appResult.updated ||
+                    appResult.currentVersionReleaseDate ||
+                    '—'
+                  }}
                 </span>
               </div>
             </div>
@@ -542,7 +514,9 @@ const searchApps = async () => {
             <div
               class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm shadow-slate-100 text-[11px] text-slate-600 space-y-2"
             >
-              <h3 class="text-[11px] font-semibold text-slate-800 uppercase tracking-[0.16em] mb-1">
+              <h3
+                class="text-[11px] font-semibold text-slate-800 uppercase tracking-[0.16em] mb-1"
+              >
                 Developer
               </h3>
               <div class="flex justify-between">
@@ -673,7 +647,7 @@ const searchApps = async () => {
                 <p class="text-[10px] text-slate-600 mt-1">
                   {{ app.free ? 'Free' : '$' + app.price }}
                 </p>
-                
+
                 <div class="mt-1 flex items-center gap-2">
                   <div class="min-w-0 flex-1">
                     <code
@@ -701,102 +675,15 @@ const searchApps = async () => {
           </p>
         </section>
       </div>
-    </main>
+    </div>
 
-    <transition name="fade">
-      <div
-        v-if="showReviewsModal"
-        class="fixed inset-0 z-30 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm"
-      >
-        <div
-          class="w-full max-w-2xl max-h-[80vh] bg-white rounded-xl shadow-lg shadow-slate-900/10 border border-slate-200 flex flex-col"
-        >
-          <div
-            class="px-4 py-3 border-b border-slate-200 flex items-center justify-between gap-3"
-          >
-            <div>
-              <p class="text-sm font-semibold text-slate-900">
-                Recent reviews
-              </p>
-              <p class="text-[11px] text-slate-500">
-                Top {{ reviews.length || 0 }} most recent reviews from App Store
-                ({{ country.toUpperCase() }})
-              </p>
-            </div>
-            <button
-              type="button"
-              @click="closeReviews"
-              class="text-[11px] text-slate-500 hover:text-slate-700"
-            >
-              Close
-            </button>
-          </div>
-
-          <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3 text-xs">
-            <p v-if="reviewsLoading" class="text-slate-500">
-              Loading reviews...
-            </p>
-            <p v-else-if="reviewsError" class="text-red-500">
-              {{ reviewsError }}
-            </p>
-            <p v-else-if="!reviews.length" class="text-slate-500">
-              No reviews found.
-            </p>
-
-            <div
-              v-for="rev in reviews"
-              :key="rev.id"
-              class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5"
-            >
-              <div class="flex items-start justify-between gap-2">
-                <div>
-                  <p class="text-[11px] font-semibold text-slate-900">
-                    {{ rev.userName || 'Anonymous' }}
-                  </p>
-                  <p class="text-[10px] text-amber-500/90">
-                    {{ ratingStars(rev.score) }}
-                    <span class="text-[10px] text-slate-500">
-                      ({{ rev.score }}/5)
-                    </span>
-                  </p>
-                </div>
-                <p class="text-[10px] text-slate-400 text-right">
-                  {{ rev.date || '' }}<br />
-                  <span v-if="rev.version" class="text-[10px]">
-                    v{{ rev.version }}
-                  </span>
-                </p>
-              </div>
-              <p v-if="rev.title" class="mt-1 text-[11px] font-medium text-slate-900">
-                {{ rev.title }}
-              </p>
-              <p class="mt-0.5 text-[11px] text-slate-700 whitespace-pre-line">
-                {{ rev.text }}
-              </p>
-              <a
-                v-if="rev.url"
-                :href="rev.url"
-                target="_blank"
-                class="mt-1 inline-flex text-[10px] text-sky-600 hover:text-sky-500"
-              >
-                View on App Store →
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <ReviewsModal
+      :show="showReviewsModal"
+      :reviews="reviews"
+      :loading="reviewsLoading"
+      :error="reviewsError"
+      :country="country"
+      @close="showReviewsModal = false"
+    />
   </div>
 </template>
-
-<style>
-/* Thêm transition cho modal, v-if không có transition mặc định */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
