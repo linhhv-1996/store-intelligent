@@ -347,11 +347,13 @@ const inspectFromSearch = (app: any) => {
                     class="w-full rounded-lg bg-white border border-slate-300 px-3 py-2 text-sm
                            focus:outline-none focus:ring-2 focus:ring-slate-900/60 focus:border-slate-900/60"
                   >
-                    <option value="us">US</option>
-                    <option value="vn">VN</option>
-                    <option value="gb">UK</option>
-                    <option value="jp">JP</option>
-                    <option value="de">DE</option>
+                    <option
+                    v-for="(code, name) in AppCountries"
+                    :key="code"
+                    :value="code"
+                  >
+                    {{ name }} ({{ code.toUpperCase() }})
+                  </option>
                   </select>
                 </div>
 
@@ -766,11 +768,13 @@ const inspectFromSearch = (app: any) => {
                 class="w-full rounded-lg bg-white border border-slate-300 px-3 py-2 text-sm
                        focus:outline-none focus:ring-2 focus:ring-slate-900/60 focus:border-slate-900/60"
               >
-                <option value="us">US</option>
-                <option value="vn">VN</option>
-                <option value="gb">UK</option>
-                <option value="jp">JP</option>
-                <option value="de">DE</option>
+                <option
+                v-for="(code, name) in AppCountries"
+                :key="code"
+                :value="code"
+              >
+                {{ name }} ({{ code.toUpperCase() }})
+              </option>
               </select>
             </div>
 

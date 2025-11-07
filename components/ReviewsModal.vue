@@ -82,8 +82,6 @@ const fetchReviewsData = async (isLoadMore = false) => {
     // @ts-ignore
     const data = await $fetch('/api/reviews', { params })
 
-    console.log(data)
-
     if ((data as any).error) {
       throw new Error((data as any).error)
     }
@@ -178,11 +176,13 @@ const platformName = computed(() => {
                      disabled:opacity-60"
               :disabled="loading || loadingMore"
             >
-              <option value="us">US</option>
-              <option value="vn">VN</option>
-              <option value="gb">UK</option>
-              <option value="jp">JP</option>
-              <option value="de">DE</option>
+              <option
+              v-for="(code, name) in AppCountries"
+              :key="code"
+              :value="code"
+            >
+              {{ name }} ({{ code.toUpperCase() }})
+            </option>
             </select>
 
             <button
