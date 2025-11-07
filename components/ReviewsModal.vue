@@ -26,12 +26,15 @@ const nextPageToken = ref<string | null>(null) // Cho Google
 // --- Watcher ---
 
 // Khi modal được mở, fetch data lần đầu
-watch(() => props.show, (newVal) => {
-  if (newVal) {
-    selectedCountry.value = props.initialCountry
-    fetchInitialReviews()
+watch(
+  () => props.show,
+  (newVal) => {
+    if (newVal) {
+      selectedCountry.value = props.initialCountry
+      fetchInitialReviews()
+    }
   }
-})
+)
 
 // Khi đổi country -> fetch lại từ trang 1
 watch(selectedCountry, () => {
@@ -46,18 +49,17 @@ const fetchReviewsData = async (isLoadMore = false) => {
     return
   }
 
-  // Phân biệt state loading
   if (!isLoadMore) {
     loading.value = true
-    reviews.value = [] // Reset list
+    reviews.value = []
     allReviewsLoaded.value = false
-    currentPage.value = 1 // Reset state Apple
-    nextPageToken.value = null // Reset state Google
+    currentPage.value = 1
+    nextPageToken.value = null
   } else {
     loadingMore.value = true
   }
   error.value = ''
-  
+
   try {
     const params: Record<string, any> = {
       appId: props.appId,
@@ -65,14 +67,13 @@ const fetchReviewsData = async (isLoadMore = false) => {
       country: selectedCountry.value,
       store: props.store
     }
-    
-    // [FIX] Lưu lại token SẼ DÙNG để so sánh
-    let tokenSent: string | null = null 
+
+    let tokenSent: string | null = null
 
     if (props.store === 'google') {
       if (isLoadMore && nextPageToken.value) {
         params.token = nextPageToken.value
-        tokenSent = nextPageToken.value // Ghi lại token đã gửi
+        tokenSent = nextPageToken.value
       }
     } else {
       params.page = String(currentPage.value)
@@ -84,39 +85,31 @@ const fetchReviewsData = async (isLoadMore = false) => {
     if ((data as any).error) {
       throw new Error((data as any).error)
     }
-    
+
     const newReviews = (data as any).reviews || []
-    
+
     if (isLoadMore) {
-      reviews.value.push(...newReviews) // Nối vào list cũ
+      reviews.value.push(...newReviews)
     } else {
-      reviews.value = newReviews // Ghi đè list
+      reviews.value = newReviews
     }
-    
-    // [FIX] Check nếu không còn review trả về (Áp dụng cho CẢ HAI store)
+
     if (newReviews.length === 0) {
       allReviewsLoaded.value = true
-      return // Stop
+      return
     }
-    
-    // Xử lý state phân trang tiếp theo
+
     if (props.store === 'google') {
       const newNextToken = (data as any).nextPageToken || null
-      
-      // [FIX] Check 3 trường hợp:
-      // 1. Token mới là null
-      // 2. Token mới trả về GIỐNG HỆT token vừa gửi đi (lỗi ông nói)
+
       if (!newNextToken || (isLoadMore && newNextToken === tokenSent)) {
         allReviewsLoaded.value = true
       } else {
-        // Nó là 1 token mới hợp lệ
         nextPageToken.value = newNextToken
       }
     } else {
-      // Apple: Tăng page lên cho lần fetch tiếp theo
       currentPage.value += 1
     }
-
   } catch (e: any) {
     error.value = e.message || 'Cannot load reviews'
   } finally {
@@ -125,15 +118,13 @@ const fetchReviewsData = async (isLoadMore = false) => {
   }
 }
 
-// Gọi hàm này khi muốn reset (mở modal, đổi country)
 const fetchInitialReviews = () => {
-  fetchReviewsData(false) // Fetch trang 1
+  fetchReviewsData(false)
 }
 
-// Gọi hàm này khi click "Load More"
 const loadMoreReviews = () => {
   if (loading.value || loadingMore.value || allReviewsLoaded.value) return
-  fetchReviewsData(true) // Fetch trang tiếp theo
+  fetchReviewsData(true)
 }
 
 // --- Helpers ---
@@ -156,23 +147,33 @@ const platformName = computed(() => {
       @click.self="emit('close')"
     >
       <div
-        class="w-full max-w-2xl max-h-[80vh] bg-white rounded-xl shadow-lg shadow-slate-900/10 border border-slate-200 flex flex-col"
+        class="w-full max-w-2xl max-h-[80vh] bg-white rounded-2xl border border-slate-900/20
+               shadow-[3px_3px_0_rgba(15,23,42,0.18)] flex flex-col overflow-hidden"
       >
+        <!-- Header -->
         <div
-          class="px-4 py-3 border-b border-slate-200 flex items-center justify-between gap-3"
+          class="px-4 py-3 border-b border-slate-200 flex items-center justify-between gap-3 bg-slate-50/80"
         >
           <div class="flex-1">
-            <p class="text-sm font-semibold text-slate-900">Recent reviews</p>
-            <p class="text-[11px] text-slate-500">
-              Recent reviews from {{ platformName }}
+            <p class="text-sm font-semibold text-slate-900 flex items-center gap-2">
+              <span
+                class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 border border-amber-200 text-[11px]"
+              >
+                ★
+              </span>
+              Recent reviews
+            </p>
+            <p class="text-[11px] text-slate-500 mt-0.5">
+              Latest user feedback from {{ platformName }}
             </p>
           </div>
-          
+
           <div class="flex items-center gap-3">
-              <select
+            <select
               v-model="selectedCountry"
-              class="rounded-lg bg-slate-100 border border-slate-200 px-2 py-1 text-xs
-                      focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
+              class="rounded-full bg-white border border-slate-300 px-2.5 py-1.5 text-[11px]
+                     focus:outline-none focus:ring-2 focus:ring-slate-900/40 focus:border-slate-900/50
+                     disabled:opacity-60"
               :disabled="loading || loadingMore"
             >
               <option value="us">US</option>
@@ -185,27 +186,39 @@ const platformName = computed(() => {
             <button
               type="button"
               @click="emit('close')"
-              class="text-[11px] text-slate-500 hover:text-slate-700"
+              class="inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1
+                     text-[11px] text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors"
             >
               Close
             </button>
           </div>
         </div>
 
-        <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3 text-xs">
-          <p v-if="loading" class="text-slate-500 text-center py-8">Loading reviews...</p>
-          <p v-else-if="error" class="text-red-500 p-4 bg-red-50 rounded-lg">
-            <strong>Error:</strong> {{ error }}
+        <!-- Body -->
+        <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3 text-xs bg-white">
+          <p v-if="loading" class="text-slate-500 text-center py-8">
+            Loading reviews...
           </p>
-          <p v-else-if="!reviews.length" class="text-slate-500 text-center py-8">
+
+          <p
+            v-else-if="error"
+            class="text-red-600 text-xs border border-red-100 bg-red-50/80 rounded-xl px-3 py-2.5"
+          >
+            <span class="font-semibold">Error:</span> {{ error }}
+          </p>
+
+          <p
+            v-else-if="!reviews.length"
+            class="text-slate-500 text-center py-8"
+          >
             No reviews found for {{ selectedCountry.toUpperCase() }}.
           </p>
 
           <template v-else>
             <div
               v-for="(rev, index) in reviews"
-              :key="rev.id || `gg-${index}`" 
-              class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5"
+              :key="rev.id || `gg-${index}`"
+              class="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2.5"
             >
               <div class="flex items-start justify-between gap-2">
                 <div>
@@ -226,15 +239,19 @@ const platformName = computed(() => {
                   </span>
                 </p>
               </div>
+
               <p
                 v-if="rev.title"
                 class="mt-1 text-[11px] font-medium text-slate-900"
               >
                 {{ rev.title }}
               </p>
-              <p class="mt-0.5 text-[11px] text-slate-700 whitespace-pre-line">
+              <p
+                class="mt-0.5 text-[11px] text-slate-700 whitespace-pre-line"
+              >
                 {{ rev.text }}
               </p>
+
               <a
                 v-if="rev.url"
                 :href="rev.url"
@@ -247,34 +264,35 @@ const platformName = computed(() => {
           </template>
         </div>
 
+        <!-- Footer -->
         <div
           v-if="!loading && !error && reviews.length > 0"
-          class="px-4 py-2 border-t border-slate-200 text-center"
+          class="px-4 py-2.5 border-t border-slate-200 bg-slate-50/80 text-center"
         >
           <button
             v-if="!allReviewsLoaded"
             type="button"
             @click="loadMoreReviews"
             :disabled="loadingMore"
-            class="text-xs text-sky-600 hover:text-sky-500 font-medium disabled:opacity-50 disabled:cursor-wait"
+            class="inline-flex items-center justify-center rounded-full px-3.5 py-1.5 text-[11px] font-medium
+                   border border-slate-300 bg-white text-slate-700 hover:bg-slate-100
+                   disabled:opacity-60 disabled:cursor-wait"
           >
-            {{ loadingMore ? 'Loading...' : 'Load More Reviews' }}
+            {{ loadingMore ? 'Loading...' : 'Load more reviews' }}
           </button>
           <p v-else class="text-[11px] text-slate-400">
             All reviews loaded.
           </p>
         </div>
-        
       </div>
     </div>
   </transition>
 </template>
 
 <style>
-/* Thêm transition cho modal, v-if không có transition mặc định */
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease;
+  transition: opacity 0.18s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
