@@ -24,6 +24,11 @@ const searchResults = ref<any[]>([])
 const searchError = ref('')
 const searchLoading = ref(false)
 
+// --- STATE MỚI CHO ĐỘ KHÓ ---
+const difficultyScore = ref<number | null>(null)
+const difficultyLoading = ref(false)
+const difficultyError = ref('')
+
 // --- Reviews modal state ---
 const showReviewsModal = ref(false)
 
@@ -107,6 +112,10 @@ const onStoreChange = () => {
   searchResults.value = []
   searchError.value = ''
   searchLoading.value = false
+
+  difficultyScore.value = null
+  difficultyLoading.value = false
+  difficultyError.value = ''
 }
 
 const setStore = (store: StoreType) => {
@@ -154,6 +163,33 @@ const checkApp = async () => {
   }
 }
 
+const fetchDifficulty = async () => {
+  difficultyLoading.value = true
+  difficultyScore.value = null
+  difficultyError.value = ''
+
+  try {
+    // @ts-ignore
+    const data = await $fetch('/api/difficulty', {
+      params: {
+        term: searchTerm.value.trim(),
+        country: searchCountry.value,
+        store: selectedStore.value
+      }
+    })
+
+    if ((data as any).error) {
+      difficultyError.value = (data as any).error
+    } else {
+      difficultyScore.value = (data as any).difficulty
+    }
+  } catch (e) {
+    difficultyError.value = 'Failed to load difficulty'
+  } finally {
+    difficultyLoading.value = false
+  }
+}
+
 const openReviews = async () => {
   if (!appResult.value) return
   showReviewsModal.value = true
@@ -197,6 +233,9 @@ const searchApps = async () => {
       searchError.value = (data as any).error
     } else {
       searchResults.value = data as any[]
+      if (searchResults.value.length > 0) {
+        fetchDifficulty()
+      }
     }
   } catch (e) {
     searchError.value = 'Something went wrong'
@@ -743,6 +782,31 @@ const inspectFromSearch = (app: any) => {
                 Find competitors or scan a niche by keyword and country.
               </p>
             </div>
+
+            <div
+              v-if="difficultyLoading || difficultyScore !== null || difficultyError"
+              class="flex-shrink-0 w-32 text-center"
+            >
+              <div v-if="difficultyLoading" class="flex flex-col items-center gap-1 text-xs text-slate-500 pt-2">
+                <span class="animate-spin text-lg">⏳</span>
+                <span>Analyzing...</span>
+              </div>
+
+              <p v-else-if="difficultyError" class="text-xs text-red-500 pt-2">
+                ⚠️ {{ difficultyError }}
+              </p>
+
+              <div v-else-if="difficultyScore !== null" class="flex flex-col items-center gap-0">
+                <p class="text-[10px] font-medium text-slate-600 uppercase tracking-wide">
+                  Difficulty
+                </p>
+                <p class="text-3xl font-bold text-slate-900 leading-tight">
+                  {{ difficultyScore }}
+                  <span class="text-base text-slate-400">/ 100</span>
+                </p>
+              </div>
+            </div>
+            
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-12 sm:items-end gap-3">
@@ -881,34 +945,7 @@ const inspectFromSearch = (app: any) => {
         </section>
       </div>
 
-
-      <section class="bg-white border border-slate-200 rounded-2xl p-6 shadow-[3px_3px_0_rgba(15,23,42,0.12)] space-y-4">
-        <h2 class="text-lg font-semibold text-slate-900">
-          About the Store Intelligence Tool
-        </h2>
-        <div class="text-sm text-slate-700 space-y-3">
-          <p>
-            <strong>Store Intelligence</strong> is an internal tool designed to quickly look up and analyze the performance of any application on the <strong>Apple App Store</strong> and <strong>Google Play Store</strong>. This tool provides a comprehensive overview of key metrics, metadata, and user feedback, helping you make better-informed decisions.
-          </p>
-          <h3 class="text-base font-semibold text-slate-800 pt-2">
-            Key Features
-          </h3>
-          <ul class="list-disc list-outside pl-5 space-y-1">
-            <li>
-              <strong>App Lookup:</strong> Easily view detailed information using an App ID (like <code>com.facebook.Facebook</code>) or a numeric ID (for the App Store). Instantly fetch data on ratings, review counts, metadata (description, release notes, version, size), OS requirements, and developer details.
-            </li>
-            <li>
-              <strong>Keyword Search:</strong> Analyze the market or find competitors by searching for apps related to specific keywords across different countries (US, VN, UK, JP, DE).
-            </li>
-            <li>
-              <strong>Review Analysis:</strong> View the latest user reviews for any app, filtering by country to understand user feedback and common issues.
-            </li>
-          </ul>
-          <p>
-            This tool utilizes <code>app-store-scraper</code> and <code>google-play-scraper</code> to fetch the latest public data directly from the app stores.
-          </p>
-        </div>
-      </section>
+      <About />
 
     </div>
 

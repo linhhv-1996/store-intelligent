@@ -11,7 +11,7 @@ module.exports = {
   theme: {
     extend: {
       maxWidth: {
-        '5xl': '1000px'
+        '5xl': '968px'
       },
       fontFamily: {
         'tech': ['"Exo 2"', 'monospace']
