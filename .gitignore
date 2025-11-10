@@ -3,3 +3,4 @@ npm-debug.log*
 .npm/
 .eslintcache
 .nuxt/
+.DS_Store

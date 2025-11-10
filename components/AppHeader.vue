@@ -9,7 +9,12 @@
         class="text-md font-bold text-slate-900 
                font-tech uppercase tracking-wider"
       >
-        Store Intelligence 🔎
+        <span style="
+    display: flex;
+    justify-content: center;
+    align-items: center;
+">store sniffer 
+</span>
       </h1>
     </div>
   </header>

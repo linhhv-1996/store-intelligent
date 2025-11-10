@@ -73,6 +73,6 @@
 
 <script setup lang="ts">
 useHead({
-  title: 'Privacy Policy - Store Intelligence'
+  title: 'Privacy Policy - store sniffer'
 })
 </script>

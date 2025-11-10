@@ -13,7 +13,7 @@
         <p class="text-xs text-slate-500">Last updated: November 7, 2025</p>
 
         <p>
-          This Store Intelligence tool ("the Tool") is provided for internal
+          This store sniffer tool ("the Tool") is provided for internal
           informational and reference purposes only.
         </p>
 
@@ -80,6 +80,6 @@
 
 <script setup lang="ts">
 useHead({
-  title: 'Terms of Use - Store Intelligence'
+  title: 'Terms of Use - store sniffer'
 })
 </script>

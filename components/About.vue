@@ -1,11 +1,11 @@
 <template>
           <section class="bg-white border border-slate-200 rounded-2xl p-6 shadow-[3px_3px_0_rgba(15,23,42,0.12)] space-y-4">
         <h2 class="text-lg font-semibold text-slate-900">
-          About the Store Intelligence Tool
+          About the store sniffer Tool
         </h2>
         <div class="text-sm text-slate-700 space-y-3">
           <p>
-            <strong>Store Intelligence</strong> is an internal tool designed to quickly look up and analyze the performance of any application on the <strong>Apple App Store</strong> and <strong>Google Play Store</strong>. This tool provides a comprehensive overview of key metrics, metadata, and user feedback, helping you make better-informed decisions.
+            <strong>store sniffer</strong> is an internal tool designed to quickly look up and analyze the performance of any application on the <strong>Apple App Store</strong> and <strong>Google Play Store</strong>. This tool provides a comprehensive overview of key metrics, metadata, and user feedback, helping you make better-informed decisions.
           </p>
           <h3 class="text-base font-semibold text-slate-800 pt-2">
             Key Features

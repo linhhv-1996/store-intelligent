@@ -262,7 +262,7 @@ const inspectFromSearch = (app: any) => {
         >
           Quick performance & meta check for any app
         </h1>
-        <p class="mt-1 text-sm text-slate-600 max-w-lg mx-auto"> Internal spy tool for your app studio – App Store & Google Play in one place.
+        <p class="mt-1 text-sm text-slate-600 max-w-lg mx-auto"> Simple spy tool for your app studio – App Store & Google Play in one place.
         </p>
       </div>
       <!-- Store & Tab Switcher -->
