@@ -1,4 +1,8 @@
 import { defineNuxtConfig } from "nuxt/config";
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+const currentDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineNuxtConfig({
   modules: ['@nuxtjs/tailwindcss'],
@@ -15,5 +19,9 @@ export default defineNuxtConfig({
         }
       ]
     }
+  },
+  alias: {
+    // Thêm cái alias này vào
+    '@libs': resolve(currentDir, './libs')
   }
 })

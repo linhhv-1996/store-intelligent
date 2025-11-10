@@ -1,6 +1,8 @@
 import { defineEventHandler, getQuery } from 'h3'
-import store from 'app-store-scraper'
-import gplay from 'google-play-scraper'
+
+import store from '@libs/app-store-scraper'
+import gplay from '@libs/google-play-scraper'
+
 
 // [ĐÃ CẬP NHẬT] Hàm helper để chuẩn hóa kết quả từ Google Play
 const normalizeGPlayApp = (appInfo: any): any => {

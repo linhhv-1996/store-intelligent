@@ -1,6 +1,8 @@
 import { defineEventHandler, getQuery } from 'h3'
-import store from 'app-store-scraper'
-import gplay from 'google-play-scraper'
+
+import store from '@libs/app-store-scraper'
+import gplay from '@libs/google-play-scraper'
+
 
 export default defineEventHandler(async (event) => {
   const { id, appId, country = 'us', page = '1', token, store: storeType = 'apple' } = getQuery(event)

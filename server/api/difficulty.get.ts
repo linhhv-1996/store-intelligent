@@ -1,6 +1,7 @@
 import { defineEventHandler, getQuery } from 'h3'
-import store from 'app-store-scraper'
-import gplay from 'google-play-scraper'
+
+import store from '@libs/app-store-scraper'
+import gplay from '@libs/google-play-scraper'
 
 // --- Helper Functions (Lấy từ app.get.ts nhưng tối giản) ---
 
