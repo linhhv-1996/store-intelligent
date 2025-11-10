@@ -1,5 +1,4 @@
 'use strict';
-const fetch = require('node-fetch'); 
 const { HttpsProxyAgent } = require('hpagent');
 
 let proxyList = []; 
