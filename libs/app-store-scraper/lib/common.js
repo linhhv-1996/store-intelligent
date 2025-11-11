@@ -2,7 +2,6 @@
 
 const request = require('request');
 const throttled = require('throttled-request')(request);
-const debug = require('debug')('app-store-scraper');
 const c = require('./constants');
 
 const { getProxyAgentByIndex, getProxyCount } = require('../../proxyManager.js');
@@ -49,7 +48,7 @@ function cleanApp (app) {
 
 const doRequest = (url, headers, requestOptions, limit) => {
   const attemptRequest = (agent) => new Promise(function (resolve, reject) {
-    debug('Making request: %s %j %o', url, headers, requestOptions);
+    console.log('Making request: %s %j %o', url, headers, requestOptions);
     requestOptions = Object.assign({ method: 'GET' }, requestOptions);
 
     let req = request;
@@ -69,13 +68,13 @@ const doRequest = (url, headers, requestOptions, limit) => {
 
     req(options, (error, response, body) => {
       if (error) {
-        debug('Request error', error);
+        console.log('Request error', error);
         return reject(error);
       }
       if (response.statusCode >= 400) {
         return reject({ response });
       }
-      debug('Finished request');
+      console.log('Finished request');
       resolve(body);
     });
   });
